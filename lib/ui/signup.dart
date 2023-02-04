@@ -78,7 +78,7 @@ class _SignUpState extends State<SignUp> {
       ),
       body: isLoading ? Container(child: Center(child: CircularProgressIndicator(),),) :  Center(
         child: Container(
-          height: height/2,
+          height: height/1.5,
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             children: [

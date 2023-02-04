@@ -36,7 +36,7 @@ class _SigninState extends State<Signin> {
         child: appBarMain(context),
       ),
       body: Container(
-        height: height/2,
+        height: height/1.7,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -76,10 +76,11 @@ key:formKey ,
                      controller: authController.passwordController,
                      validator: (v) {
                        if (authController.emailController.text.isEmpty) {
-                         return "Please Enter the Password";
-                       }else if(!RegExp(pattern).hasMatch(authController.passwordController.text)){
-                         return "Password Must contain 1 Uppercase, 1 symbol and length must be 8";
+                         return "Please Enter the Email";
                        }
+                       // else if(!RegExp(pattern).hasMatch(authController.passwordController.text)){
+                       //   return "Password Must contain 1 Uppercase, 1 symbol and length must be 8";
+                       // }
                      },
                      obscureText: true,
                 style: TextStyle(
