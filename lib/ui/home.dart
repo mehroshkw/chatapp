@@ -13,8 +13,8 @@ import '../services/database.dart';
 
 
 class Home extends StatefulWidget {
-  final String uid;
-  const Home({required this.uid});
+  final String uid, email;
+  const Home({required this.uid, required this.email});
 
   @override
   State<Home> createState() => _HomeState();
@@ -115,7 +115,7 @@ class _HomeState extends State<Home> {
                         suffixIcon: IconButton(
                             onPressed: (){
                               // initiateSearch();
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => Search(search: search.text)));
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => Search(search: search.text, uid: widget.uid, email: widget.email,)));
                             },
                             icon: Icon(Icons.search)
                         ),

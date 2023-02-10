@@ -24,6 +24,13 @@ class DatabaseMethods {
         // .getDocuments();
   }
 
+  createChatRoom(String chatRoomId, chatRoomMap){
+    FirebaseFirestore.instance
+          .collection("chatRoom").doc(chatRoomId).set(chatRoomMap).catchError((e){
+            print(e.toString());
+    });
+  }
+
   // Future<bool> addChatRoom(chatRoom, chatRoomId) {
   //   FirebaseFirestore.instance
   //       .collection("chatRoom")

@@ -26,7 +26,7 @@ class FBAuth{
       prefs.setString("uid","${user?.uid.toString()}" );
       if (user != null) {
         print("login user catch id: ${user?.uid.toString()}");
-        Get.to(Home(uid: '${user?.uid}',));
+        Get.to(Home(uid: '${user?.uid}',email:emailController.text ,));
       } else {
         print('Error in Creating Account');
       }

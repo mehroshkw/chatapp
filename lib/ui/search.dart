@@ -1,11 +1,14 @@
+import 'package:chatapp/ui/chatrooms.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/database.dart';
 
 class Search extends StatefulWidget {
+  final String uid, email;
   final String search;
-   Search({Key? key, required this.search});
+   Search({Key? key, required this.search, required this.uid, required this.email});
 
   @override
   State<Search> createState() => _SearchState();
@@ -49,7 +52,7 @@ class _SearchState extends State<Search> {
 
   searchByName(String searchField) {
     return FirebaseFirestore.instance
-        .collection("users")
+        .collection("chatAppUsers")
         .where('name', isEqualTo: searchField).snapshots().length;
     // .getDocuments();
   }
@@ -65,6 +68,26 @@ class _SearchState extends State<Search> {
 
           );
         }) : Container();
+  }
+
+  createchatRoom(String username){
+    String chatroomID= getChatRoomId(username, widget.email);
+    List<String> users = [username, widget.email];
+    Map<String, dynamic> chatroomMap = {
+      'users' : users,
+      'chatroomId' : chatroomID
+    };
+    databaseMethods.createChatRoom(chatroomID, chatroomMap);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRooms(username: username,)));
+
+  }
+
+  getChatRoomId(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    } else {
+      return "$a\_$b";
+    }
   }
 
   @override
@@ -95,7 +118,10 @@ class _SearchState extends State<Search> {
                       child: ListTile(
                         title: Text("${result["name"]}"),
                         subtitle: Text(result["email"]),
-                        trailing: IconButton(onPressed: (){}, icon: Icon(Icons.message_outlined),
+                        trailing: IconButton(onPressed: (){
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRooms()));
+                          createchatRoom("${result["email"]}");
+                        }, icon: Icon(Icons.message_outlined),
                       ),
                     ));
                   });

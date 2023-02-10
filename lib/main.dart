@@ -64,7 +64,7 @@ Future<void> main() async{
         scaffoldBackgroundColor: Colors.black38,
         primaryColor: Colors.white,
       ),
-    home: emails == null ? Signin() : Home(uid: uid!,),
+    home: emails == null ? Signin() : Home(uid: uid!, email: emails!,),
   ));
 }
 
