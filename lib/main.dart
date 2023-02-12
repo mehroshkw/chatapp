@@ -1,5 +1,5 @@
 import 'package:chatapp/calling_ui/invitation_screen.dart';
-import 'package:chatapp/calling_ui/video_calling.dart';
+import 'package:chatapp/calling_ui/audio_calling.dart';
 import 'package:chatapp/ui/chatrooms.dart';
 import 'package:chatapp/ui/home.dart';
 import 'package:chatapp/ui/signin.dart';
@@ -53,7 +53,7 @@ Future<void> main() async{
       // );
       print('recieved');
       // Get.to(Test());
-    Get.to(VideoCalling(callingID: uid.toString()));
+    Get.to(AudioCalling(callingID: uid.toString()));
     // Get.to(InvitationScreen());
     // }
   });

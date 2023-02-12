@@ -40,6 +40,7 @@ class _SearchState extends State<Search> {
       });
     }
   }
+
   getUserInfo(String email) async {
     return FirebaseFirestore.instance
         .collection("chatAppUsers")
@@ -78,7 +79,7 @@ class _SearchState extends State<Search> {
       'chatroomId' : chatroomID
     };
     databaseMethods.createChatRoom(chatroomID, chatroomMap);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRooms(username: username,)));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRooms(username: username, chatRoomId: chatroomID, email: widget.email,)));
 
   }
 

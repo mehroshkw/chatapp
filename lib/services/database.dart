@@ -41,14 +41,22 @@ class DatabaseMethods {
   //   });
   // }
 
-  // getChats(String chatRoomId) async{
-  //   return FirebaseFirestore.instance
-  //       .collection("chatRoom")
-  //       .document(chatRoomId)
-  //       .collection("chats")
-  //       .orderBy('time')
-  //       .snapshots();
-  // }
+  addChats(String chatRoomId, msgMap) async{
+    return FirebaseFirestore.instance
+        .collection("chatRoom")
+        .doc(chatRoomId)
+        .collection("chats")
+        .add(msgMap).catchError((e){
+          print(e.toString());
+        });
+  }
+
+ getChats(String chatRoomId) async{
+    return await FirebaseFirestore.instance
+        .collection("chatRoom")
+        .doc(chatRoomId)
+        .collection("chats").orderBy("time", descending: false).snapshots();
+  }
 
 
   // Future<void> addMessage(String chatRoomId, chatMessageData){
@@ -65,6 +73,12 @@ class DatabaseMethods {
     return await FirebaseFirestore.instance
         .collection("chatAppUsers")
         .where('name', arrayContains: itIsMyName)
+        .snapshots();
+  }
+  getUser(String username) async {
+    return await FirebaseFirestore.instance
+        .collection("chatRoom")
+        .where('email', arrayContains: username)
         .snapshots();
   }
 

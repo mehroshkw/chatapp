@@ -5,11 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-import '../calling_ui/video_calling.dart';
+import '../calling_ui/audio_calling.dart';
+import '../calling_ui/vidcalling.dart';
 import '../services/auth.dart';
 import 'package:http/http.dart' as http;
 
 import '../services/database.dart';
+import 'chatrooms.dart';
 
 
 class Home extends StatefulWidget {
@@ -21,7 +23,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final callingId = TextEditingController();
   final search = TextEditingController();
@@ -33,6 +34,7 @@ class _HomeState extends State<Home> {
   bool haveUserSearched = false;
 
   initiateSearch() async {
+    databaseMethods.getUser(widget.email).then((){});
     if(search.text.isNotEmpty){
       setState(() {
         isLoading = true;
@@ -40,12 +42,31 @@ class _HomeState extends State<Home> {
       await databaseMethods.searchByName(search.text)
           .then((snapshot){
         searchResultSnapshot = snapshot;
-        print("$searchResultSnapshot");
+        // print("$searchResultSnapshot");
         setState(() {
           isLoading = false;
           haveUserSearched = true;
         });
       });
+    }
+  }
+  createchatRoom(String username){
+    String chatroomID= getChatRoomId(username, widget.email);
+    List<String> users = [username, widget.email];
+    Map<String, dynamic> chatroomMap = {
+      'users' : users,
+      'chatroomId' : chatroomID
+    };
+    databaseMethods.createChatRoom(chatroomID, chatroomMap);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ChatRooms(username: username, chatRoomId: chatroomID, email: widget.email,)));
+
+  }
+
+  getChatRoomId(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    } else {
+      return "$a\_$b";
     }
   }
   getUserInfo(String email) async {
@@ -73,14 +94,13 @@ class _HomeState extends State<Home> {
           return ListTile(
             title: searchByName(search.text).documents[index].data["name"],
             subtitle: searchByName(search.text).documents[index].data["email"],
-            
           );
         }) : Container();
   }
 
   @override
   void initState() {
-    print("user id after login is: ${widget.uid}");
+    // print("user id after login is: ${widget.uid}");
     super.initState();
     subToTopic(widget.uid);
   }
@@ -90,13 +110,13 @@ class _HomeState extends State<Home> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Home"),
+        title: const Text("Home"),
         actions: [
           IconButton(onPressed: (){
             FBAuth().logoutUser();
             unSubToTopic(widget.uid);
             },
-              icon: Icon(Icons.logout)),
+              icon: const Icon(Icons.logout)),
         ],
 
       ),
@@ -104,7 +124,7 @@ class _HomeState extends State<Home> {
         padding: const EdgeInsets.all(8.0),
         child:  Column(
           children: [
-            Expanded(flex: 3,
+            Expanded(flex: 2,
               child: Container(
                 child: Column(
                 children: [
@@ -123,32 +143,33 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   SizedBox(height: 20,),
-                  TextFormField(
-                    controller: callingId,
-                    decoration: const InputDecoration(
-                        hintText: "Enter Call ID",
-                        border: OutlineInputBorder()
-                    ),
-                  ),
-                  ElevatedButton(
-                      onPressed: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => VideoCalling(
-                            callingID: callingId.text.toString()
-                        )
-                        )
-                        );
-                      },
-                      child: Text(
-                          "Join"
-                      )
-                  ),
+                  // TextFormField(
+                  //   controller: callingId,
+                  //   decoration: const InputDecoration(
+                  //       hintText: "Enter Call ID",
+                  //       border: OutlineInputBorder()
+                  //   ),
+                  // ),
+                  // ElevatedButton(
+                  //     onPressed: (){
+                  //       Navigator.push(context, MaterialPageRoute(builder: (context) => VideoCalling(
+                  //           callingID: callingId.text.toString()
+                  //       )
+                  //       )
+                  //       );
+                  //     },
+                  //     child: Text(
+                  //         "Join"
+                  //     )
+                  // ),
 
                 ],
               ),
             ),),
             Expanded(
-              flex: 6,
+              flex: 9,
               child: StreamBuilder<QuerySnapshot>(
+                  // firestore.collection("chatRoom").where('email', arrayContains: widget.email).snapshots()
                 stream: firestore.collection("chatAppUsers").snapshots(),
                 builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
@@ -187,17 +208,29 @@ class _HomeState extends State<Home> {
                                               height: 8.0,
                                             ),
                                             Row(children: [
-                                              IconButton(onPressed: (){}, icon: Icon(Icons.message_outlined)),
+                                              IconButton(onPressed: (){
+                                                createchatRoom("${result["email"]}");
+                                              }, icon: Icon(Icons.message_outlined)),
                                               IconButton(onPressed: (){
                                                 print(result['uid']);
-                                                callOnFcmApiSendPushNotifications(topic: result['uid'],title: 'Test Notification', body: 'Hi! This is Hassan XD');
+                                                callOnFcmApiSendPushNotifications(topic: result['uid'],title: 'Test Notification', body: 'Incoming Audio Call From ${result["email"]} ');
+                                                Navigator.push(context, MaterialPageRoute(builder: (context) => AudioCalling(
+                                                    callingID: result['uid']
+                                                )
+                                                )
+                                                );
+
+                                              }, icon: Icon(Icons.call)),
+                                              IconButton(onPressed: (){
+                                                print(result['uid']);
+                                                callOnFcmApiSendPushNotifications(topic: result['uid'],title: 'Test Notification', body: 'Incoming Video Call From ${result["email"]} ');
                                                 Navigator.push(context, MaterialPageRoute(builder: (context) => VideoCalling(
                                                     callingID: result['uid']
                                                 )
                                                 )
                                                 );
 
-                                              }, icon: Icon(Icons.call))
+                                              }, icon: Icon(Icons.video_camera_front))
                                             ],)
 
                                           ],

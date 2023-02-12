@@ -5,15 +5,15 @@ import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 import 'dart:math' as math;
 
 
-class VideoCalling extends StatefulWidget {
+class AudioCalling extends StatefulWidget {
   final String callingID;
-  const VideoCalling({ required this.callingID});
+  const AudioCalling({ required this.callingID});
 
   @override
-  State<VideoCalling> createState() => _VideoCallingState();
+  State<AudioCalling> createState() => _AudioCallingState();
 }
 
-class _VideoCallingState extends State<VideoCalling> {
+class _AudioCallingState extends State<AudioCalling> {
 
   final String localUserID = math.Random().nextInt(10000).toString();
   @override

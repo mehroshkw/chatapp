@@ -1,4 +1,4 @@
-import 'package:chatapp/calling_ui/video_calling.dart';
+import 'package:chatapp/calling_ui/audio_calling.dart';
 import 'package:flutter/material.dart';
 
 class SearchCaller extends StatefulWidget {
@@ -29,7 +29,7 @@ class _SearchCallerState extends State<SearchCaller> {
             SizedBox(height: 20,),
             ElevatedButton(
                 onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => VideoCalling(callingID: callingId.text.toString())));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => AudioCalling(callingID: callingId.text.toString())));
                 },
                 child: Text(
                     "Join"
